@@ -8,6 +8,10 @@ Status: `ratified` by the owner, 2026-11-23. This document records the naming la
 seed → capillary → myosotis → aestivation → drosera → bloom
 ```
 
+The line grows against **trellis**: the testing lattice the members are probed
+on — shape, behavior, consistency, operational — so the family's health is an
+observed, dated run rather than a claimed property.
+
 The public-product family is named from botany, on purpose: the five persona seats of
 the house canon — Violet, Wisteria, Xylia, Yarrow, Zinnia — are all flowering plants, so
 the products they use take the same kingdom. Each name names what its system does:
@@ -20,6 +24,7 @@ the products they use take the same kingdom. Each name names what its system doe
 | **aestivation** | the arrangement of petals in the bud before it opens | admission and review | the loop that arranges and gates work before assembly |
 | **drosera** | the sundew, whose tentacles reach out and hold | the tooling fabric | tool faces, skills, hooks, cookbooks — the extensions an agent works with |
 | **bloom** | the opened flower | the team workspace | the group conversation, shared desktop, shipped artifacts |
+| **trellis** | the lattice a climbing plant grips, at many points | the testing lattice | multi-point probes — shape, behavior, consistency, operational — with dated health as observed runs |
 
 ## The laws the line carries
 

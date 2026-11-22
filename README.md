@@ -37,7 +37,8 @@ The botanic line, per [docs/family.md](docs/family.md): **seed** (the foundation
 grows from) → **capillary** (these channels, lifting context to it) → **myosotis**
 (governed memory: consent, keep, and forget) → **aestivation** (the bud's arrangement —
 admission and review before assembly) → **drosera** (the sundew's tentacles — tools,
-skills, hooks, cookbooks) → **bloom** (the opened team workspace).
+skills, hooks, cookbooks) → **bloom** (the opened team workspace), with the whole line
+growing against **trellis** (the testing lattice that keeps every member honest).
 
 Capillary owns retrieval and organization only. Remembering with consent is the memory
 fabric's job (forget is a promise there, not a default); deciding what gets admitted into
