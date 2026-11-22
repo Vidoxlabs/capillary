@@ -1,7 +1,7 @@
 # Contract: bounded retrieval and provenance
 
-Status: `specified`; the records and the packet builder are `implemented` in
-`src/provenance.mjs` and `src/packet.mjs`.
+Status: `specified`. Source records, packet building, and bounded reads over caller
+text are `implemented` in `src/provenance.mjs`, `src/packet.mjs`, and `src/read.mjs`.
 
 ## Source records
 
@@ -103,12 +103,31 @@ only compares the two numbers.
 The older retrieval code skipped the check when no epoch could be read at the start.
 This contract refuses instead.
 
+## Bounded read
+
+`readSource({ sourceId, sources, text, tokenBudget = 2000 })` matches a single
+recorded source id in the supplied source list and clips the caller's text. It
+checks the source's recorded shape, including evidence class and confidence. The
+caller supplies the text and its association with the source.
+
+A positive integer token budget allows four Unicode code points per estimated token.
+The result reports the requested budget and the estimated token count of the text
+returned, rounded up. `truncated` and `continuationAvailable` are true exactly when
+the function leaves text out.
+
+Both forms carry `untrusted: true`. A successful result carries `ok: true`, `source`,
+and `text`. A missing id returns `ok: false` with `error.code: 'source-not-found'`.
+An unknown source or a malformed recorded source returns `source-unavailable`.
+Errors carry no text and set `continuationAvailable` to false.
+
 ## Determinism
 
 The builder admits items in the order given, taking `min(perItemBudget, remaining)`
 characters per item. Same inputs, same packet: retrieval shaping is pure and testable.
 
 ## Changes
+
+- `1.1.0` — adds `readSource`, an untrusted bounded-read envelope for supplied text.
 
 - `1.0.0` — breaking change to `recordSource`. It refuses recorded sources that omit
   `evidenceClass` or `confidence`. Supply both fields from the source evidence when
