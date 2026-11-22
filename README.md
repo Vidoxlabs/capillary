@@ -2,7 +2,7 @@
 
 Capillary is an open, local-first **context retrieval system** for agent workspaces. It
 records sources with their digests, retrieves **bounded, provenance-honest packets** of
-them, and keeps **typed relations** between the items it holds — the fine-channel work of
+them, and keeps **typed relations** between the items it holds: the fine-channel work of
 lifting context up to the team that needs it, without letting prose smuggle in as fact.
 
 Agent surfaces like [Bloom](https://github.com/Vidoxlabs/bloom) consume capillary exactly
@@ -11,7 +11,7 @@ sources, and specialists receive bounded excerpts that say what they are, where 
 from, and what was shortened. Harness foundations like [Seed](https://github.com/Vidoxlabs/seed)
 admit capillary's retrieval tools to their runs and record each retrieval as an intent.
 
-**Status: `0.2.0` — contracts and packet/provenance/relations modules.** The retrieval
+**Status: `0.2.0`, contracts and packet/provenance/relations modules.** The retrieval
 seam, source recording, and relation contracts are implemented and covered by `npm test`.
 The backing stores (index, service) are specified, not shipped. Nothing in this repository
 opens a network listener or retrieves over the network today.
@@ -28,15 +28,15 @@ opens a network listener or retrieves over the network today.
 
 ## Contracts
 
-- [Bounded retrieval](docs/contracts/retrieval.md) — the packet: budgets, declared shortening, declared omissions
-- [Provenance](docs/contracts/retrieval.md) — digests and origin classes on every source
+- [Bounded retrieval](docs/contracts/retrieval.md): the packet, its budgets, declared shortening, declared omissions
+- [Provenance](docs/contracts/retrieval.md): digests and origin classes on every source
 
 ## How capillary fits the family (`specified`)
 
 The botanic line, per [docs/family.md](docs/family.md): **seed** (the foundation a runtime
 grows from) → **capillary** (these channels, lifting context to it) → **myosotis**
-(governed memory: consent, keep, and forget) → **aestivation** (the bud's arrangement —
-admission and review before assembly) → **drosera** (the sundew's tentacles — tools,
+(governed memory: consent, keep, and forget) → **aestivation** (the bud's arrangement,
+admission and review before assembly) → **drosera** (the sundew's tentacles: tools,
 skills, hooks, cookbooks) → **bloom** (the opened team workspace), with the whole line
 growing against **trellis** (the testing lattice that keeps every member honest).
 
@@ -47,12 +47,13 @@ seam.
 
 ## Documentation
 
-- [Charter](docs/charter.md) — mission, principles, non-goals
-- [Architecture](docs/architecture.md) — sources, index, packets, relations
-- [Contracts](docs/contracts/retrieval.md) — bounded retrieval and provenance
-- [Relations contract](docs/contracts/relations.md) — typed, append-only context relations
-- [Interop](docs/interop.md) — Bloom, Seed, and the memory seam
-- [Family](docs/family.md) — the botanic naming line
+- [AGENTS.md](AGENTS.md): start here before editing. Stay in this repository's province.
+- [Charter](docs/charter.md): mission, principles, non-goals
+- [Architecture](docs/architecture.md): sources, index, packets, relations
+- [Contracts](docs/contracts/retrieval.md): bounded retrieval and provenance
+- [Relations contract](docs/contracts/relations.md): typed, append-only context relations
+- [Interop](docs/interop.md): Bloom, Seed, and the memory seam
+- [Family](docs/family.md): the botanic naming line
 
 ## License
 
