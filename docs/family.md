@@ -5,7 +5,7 @@ Status: `ratified` by the owner, 2026-11-23. This document records the naming la
 ## The line
 
 ```
-seed → capillary → myosotis → aestivation → bloom
+seed → capillary → myosotis → aestivation → drosera → bloom
 ```
 
 The public-product family is named from botany, on purpose: the five persona seats of
@@ -18,6 +18,7 @@ the products they use take the same kingdom. Each name names what its system doe
 | **capillary** | the fine channels that lift water through a plant | context retrieval and organization | bounded, provenance-honest context flow |
 | **myosotis** | forget-me-not | the memory fabric | governed memory: consent to keep, promise to forget on demand |
 | **aestivation** | the arrangement of petals in the bud before it opens | admission and review | the loop that arranges and gates work before assembly |
+| **drosera** | the sundew, whose tentacles reach out and hold | the tooling fabric | tool faces, skills, hooks, cookbooks — the extensions an agent works with |
 | **bloom** | the opened flower | the team workspace | the group conversation, shared desktop, shipped artifacts |
 
 ## The laws the line carries
