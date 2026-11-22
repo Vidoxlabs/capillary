@@ -55,7 +55,28 @@ function validatedItem(item, index) {
   if (typeof text !== 'string' || text.length === 0) {
     throw new PacketError(`Item ${index} needs non-empty text; a nothing excerpt is not context.`);
   }
-  return { id, sourceId, sourceDigest, text };
+  return { id, sourceId, sourceDigest, text, ...rankingDimensions(item, index) };
+}
+
+/**
+ * Relevance and recency are separate fields, never one fused number. Relevance is a
+ * finite number from the ranker, recency the source's last-change time in epoch
+ * milliseconds. Either may be null when the caller did not measure it; neither is
+ * filled in from the other. An item carrying a fused `score` is refused.
+ */
+function rankingDimensions(item, index) {
+  if (Object.hasOwn(item, 'score')) {
+    throw new PacketError(`Item ${index} carries a fused score; give relevance and recency as separate fields.`);
+  }
+  const relevance = item.relevance ?? null;
+  const recency = item.recency ?? null;
+  if (relevance !== null && (typeof relevance !== 'number' || !Number.isFinite(relevance))) {
+    throw new PacketError(`Item ${index} relevance must be a finite number or null.`);
+  }
+  if (recency !== null && (!Number.isSafeInteger(recency) || recency < 0)) {
+    throw new PacketError(`Item ${index} recency must be epoch milliseconds or null.`);
+  }
+  return { relevance, recency };
 }
 
 /**
@@ -103,6 +124,8 @@ export function buildContextPacket({
       id: item.id,
       sourceId: item.sourceId,
       sourceDigest: item.sourceDigest,
+      relevance: item.relevance,
+      recency: item.recency,
       text: item.text.slice(0, carried),
       shortened: carried < item.text.length,
       carried,

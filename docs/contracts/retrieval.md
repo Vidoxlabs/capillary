@@ -43,6 +43,8 @@ A packet answers one retrieval with bounded honesty:
   items: [
     {
       id, sourceId, sourceDigest,
+      relevance,       // the ranker's number, or null
+      recency,         // the source's last change, epoch ms, or null
       text,            // the excerpt actually carried
       shortened,       // true when cut
       carried,         // characters admitted from this item
@@ -69,12 +71,45 @@ unknown and is never filled in from elsewhere. Omission reasons are closed:
   characters across the packet, 12,000 per item, the shape the first consumer (bloom's
   team packets) proved. Caller budgets win where stated.
 
+## Relevance and recency
+
+An item may carry `relevance` (a finite number from whatever ranked it) and `recency`
+(the source's last-change time in epoch milliseconds). They stay two fields on every
+admitted item. Either is `null` when the caller did not measure it, and neither is filled
+in from the other. An item carrying a fused `score` is refused, because one number hides
+which dimension ranked it. The builder keeps the caller's order; it does not sort by
+either field.
+
+## Deletion epoch
+
+`buildEpochGuardedPacket({ readEpoch, read, totalBudget?, perItemBudget? })` brackets
+one read with two epoch reads. The epoch belongs to whichever store forgets; capillary
+only compares the two numbers.
+
+1. The epoch is read before `read()` runs and again after it returns.
+2. When they differ, a forget landed during the read, and the rows may hold forgotten
+   content. No packet is built. The result is a frozen refusal:
+   `{ refused: true, code: 'deletion-epoch-changed', epochStart, epochEnd, reason }`.
+3. When either epoch cannot be read as a non-negative integer, the read cannot show it
+   was stable. The result is a refusal with code `deletion-epoch-unavailable`. If the
+   first epoch cannot be read, `read()` does not run.
+4. A refusal has no `items`. It is never an empty packet.
+5. A packet built under a stable epoch carries `deletionEpoch`.
+
+The older retrieval code skipped the check when no epoch could be read at the start.
+This contract refuses instead.
+
 ## Determinism
 
 The builder admits items in the order given, taking `min(perItemBudget, remaining)`
 characters per item. Same inputs, same packet: retrieval shaping is pure and testable.
 
 ## Changes
+
+- `0.3.0` — packet items carry `relevance` and `recency` as separate fields, and an
+  item with a fused `score` is refused. `buildEpochGuardedPacket` and `EPOCH_REFUSALS`
+  are new. Existing calls return the same items plus two `null` fields each; a caller
+  that passed `score` must split it or drop it.
 
 - `0.2.0` — unknown sources are `implemented`: `recordUnknownSource`,
   `isUnknownSource`, `UNKNOWN_REASONS`, `OMISSION_REASONS`, the packet's `unknown` list,

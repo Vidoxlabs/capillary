@@ -11,7 +11,7 @@ sources, and specialists receive bounded excerpts that say what they are, where 
 from, and what was shortened. Harness foundations like [Seed](https://github.com/Vidoxlabs/seed)
 admit capillary's retrieval tools to their runs and record each retrieval as an intent.
 
-**Status: `0.2.0`, contracts and packet/provenance/relations modules.** The retrieval
+**Status: `0.3.0`, contracts and packet/provenance/relations modules.** The retrieval
 seam, source recording, and relation contracts are implemented and covered by `npm test`.
 The backing stores (index, service) are specified, not shipped. Nothing in this repository
 opens a network listener or retrieves over the network today.
@@ -21,7 +21,8 @@ opens a network listener or retrieves over the network today.
 | Module | What it does |
 | --- | --- |
 | `src/provenance.mjs` | Records sources (id, title, 64-hex digest, origin class, origin reference), and records unknown sources with their reason |
-| `src/packet.mjs` | Builds bounded context packets with **declared** truncation, budgeted admission, and declared unknown sources |
+| `src/packet.mjs` | Builds bounded context packets with **declared** truncation, budgeted admission, declared unknown sources, and relevance and recency kept as separate fields |
+| `src/epoch-guard.mjs` | Refuses a packet when the deletion epoch at the end of a read differs from the epoch at its start, or cannot be read |
 | `src/relations.mjs` | Typed, append-only relation records over a known set of sources |
 
 `npm install && npm test` verifies all of it. No runtime dependencies.
