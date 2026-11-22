@@ -34,8 +34,8 @@ declares what it did.
 - No credentials, tokens, account names, personal handles, hostnames, IP addresses,
   port numbers, container names, cluster names, or network topologies in any committed file.
 - No binary assets.
-- No invented product names; the botanic family line (`seed`, `capillary`, `myosotis`,
-  `aestivation`, `bloom`) is the naming law for new public products, per `docs/family.md`.
+- No invented product names. The family is `seed`, `capillary`, `myosotis`,
+  `aestivation`, `drosera`, `trellis`, and `bloom`, per `docs/family.md`.
 - Runtime dependencies: none. A dependency proposal is an architecture decision first.
 
 ## Verification cycle
@@ -51,3 +51,48 @@ the contract modules and tests in the same commit.
 
 Sentence-case subject lines, imperative mood, one concern per commit, and reference the
 contract that owns the behavior being changed.
+
+## Stay in this province
+
+This repository is context retrieval: provenance records, bounded packets, and relations. It is a peer. Seed is the floor beneath it. Myosotis, aestivation, and drosera are the other peers. Bloom is the only composer above. Trellis is outside the call path. This task does not edit them. It does not keep memory, judge a plan, pack tools, probe the family, or draw the workspace.
+
+A packet declares truncation and omission. An unknown source stays unknown. Do not fill a gap from another repository.
+
+## Where the other six live
+
+| The work | Repository |
+| --- | --- |
+| Run records, tool identity, provider shape | `seed` |
+| Bounded retrieval and relations | `capillary` (here) |
+| Consent, forget, and recall | `myosotis` |
+| Plans, verdicts, and the assembly gate | `aestivation` |
+| Tool faces, skills, hooks, cookbooks | `drosera` |
+| Probes over those libraries | `trellis` |
+| The team workspace a person opens | `bloom` |
+
+The naming law is `docs/family.md`. `videsign` remains the design canon.
+
+## Skills
+
+This file is the working method. A skill adds instructions and grants nothing. Do not add a second skill system here. A packaged copy is a drosera skill record, and it still grants nothing.
+
+## Agents
+
+One working method lives here. Do not add a roster, and do not edit a sibling from this checkout.
+
+## References
+
+Read in this order: `docs/charter.md`, `docs/architecture.md`, `docs/contracts/`, `docs/family.md`, `docs/interop.md`, then `src/`. Code and `npm test` win over a stale sentence.
+
+## Cookbook
+
+1. Read the charter and this file.
+2. Run `npm test`.
+3. Change a contract only together with the module and the test that hold it.
+4. Stop at the province boundary in the table above.
+
+This recipe is instructions. This repository ships no tool pack.
+
+## MCP
+
+This repository is not an MCP server. Do not commit an MCP configuration, a server address, or a credential. Retrieval leaves this repository only as data a caller already asked for. Keeping that data is myosotis's province.
