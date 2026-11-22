@@ -6,13 +6,22 @@ export const ORIGIN_CLASSES = new Set([
   'url', 'repository', 'text', 'workspace-file', 'run-artifact',
 ]);
 
+const EVIDENCE_CLASSES = [
+  'operator-intent', 'operator-constraint', 'model-proposal', 'model-analysis',
+  'tool-observation', 'verified-outcome', 'unverified-claim', 'system-metadata',
+];
+const CONFIDENCE_CLASSES = [
+  'direct-operator', 'direct-tool', 'model-with-evidence', 'model-unverified',
+  'historical-summary', 'derived',
+];
+
 export class ProvenanceError extends Error {}
 
 /**
  * Record a source. A source without a digest is not a source; an unverifiable origin
  * stays unknown and never enters a packet. Returns a frozen record.
  */
-export function recordSource({ id, title, digest, origin, originRef }) {
+export function recordSource({ id, title, digest, origin, originRef, evidenceClass, confidence }) {
   if (typeof id !== 'string' || id.length === 0) throw new ProvenanceError('A source needs a non-empty id.');
   if (typeof title !== 'string' || title.length === 0) throw new ProvenanceError('A source needs a title.');
   if (typeof digest !== 'string' || !DIGEST_PATTERN.test(digest)) {
@@ -24,7 +33,13 @@ export function recordSource({ id, title, digest, origin, originRef }) {
   if (typeof originRef !== 'string' || originRef.length === 0) {
     throw new ProvenanceError('A source names its originRef inside its origin class.');
   }
-  return Object.freeze({ id, title, digest, origin, originRef, status: 'recorded' });
+  if (!EVIDENCE_CLASSES.includes(evidenceClass)) {
+    throw new ProvenanceError(`evidenceClass must be one of ${EVIDENCE_CLASSES.join(', ')}.`);
+  }
+  if (!CONFIDENCE_CLASSES.includes(confidence)) {
+    throw new ProvenanceError(`confidence must be one of ${CONFIDENCE_CLASSES.join(', ')}.`);
+  }
+  return Object.freeze({ id, title, digest, origin, originRef, evidenceClass, confidence, status: 'recorded' });
 }
 
 /** Why a source stayed unknown. Closed: a new reason is a contract decision. */

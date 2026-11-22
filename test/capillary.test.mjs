@@ -8,20 +8,41 @@ import { walkParentChain } from '../src/index.mjs';
 
 const DIGEST = 'a'.repeat(64);
 const otherDigest = 'b'.repeat(64);
+const sourceFields = {
+  id: 'src-1', title: 'Field notebook', digest: DIGEST, origin: 'text', originRef: 'field notes',
+  evidenceClass: 'tool-observation', confidence: 'direct-tool',
+};
 
 const item = (id, text, sourceId = 'src-1', sourceDigest = DIGEST) => ({
   id, sourceId, sourceDigest, text,
 });
 
 test('sources carry provenance or they are not sources', () => {
-  const source = recordSource({ id: 'src-1', title: 'Field notebook', digest: DIGEST, origin: 'text', originRef: 'notes/field-2026' });
+  const source = recordSource(sourceFields);
   assert.equal(source.id, 'src-1');
-  assert.throws(() => recordSource({ id: '', title: 't', digest: DIGEST, origin: 'text', originRef: 'r' }), ProvenanceError);
-  assert.throws(() => recordSource({ id: 's', title: '', digest: DIGEST, origin: 'text', originRef: 'r' }), ProvenanceError);
-  assert.throws(() => recordSource({ id: 's', title: 't', digest: 'nothex', origin: 'text', originRef: 'r' }), ProvenanceError);
-  assert.throws(() => recordSource({ id: 's', title: 't', digest: DIGEST, origin: 'somewhere', originRef: 'r' }), ProvenanceError);
-  assert.throws(() => recordSource({ id: 's', title: 't', digest: DIGEST, origin: 'text', originRef: '' }), ProvenanceError);
+  assert.throws(() => recordSource({ ...sourceFields, id: '' }), ProvenanceError);
+  assert.throws(() => recordSource({ ...sourceFields, title: '' }), ProvenanceError);
+  assert.throws(() => recordSource({ ...sourceFields, digest: 'nothex' }), ProvenanceError);
+  assert.throws(() => recordSource({ ...sourceFields, origin: 'somewhere' }), ProvenanceError);
+  assert.throws(() => recordSource({ ...sourceFields, originRef: '' }), ProvenanceError);
   assert.equal(ORIGIN_CLASSES.has('run-artifact'), true);
+});
+
+test('recorded sources carry a closed evidence class and confidence independently of origin', () => {
+  const cases = [
+    ['operator-intent', 'direct-operator'], ['operator-constraint', 'direct-operator'],
+    ['model-proposal', 'model-unverified'], ['model-analysis', 'model-with-evidence'],
+    ['tool-observation', 'direct-tool'], ['verified-outcome', 'direct-tool'],
+    ['unverified-claim', 'historical-summary'], ['system-metadata', 'derived'],
+  ];
+  for (const [evidenceClass, confidence] of cases) {
+    const source = recordSource({ ...sourceFields, evidenceClass, confidence });
+    assert.deepEqual([source.origin, source.evidenceClass, source.confidence], ['text', evidenceClass, confidence]);
+  }
+  assert.throws(() => recordSource({ ...sourceFields, evidenceClass: undefined }), ProvenanceError);
+  assert.throws(() => recordSource({ ...sourceFields, evidenceClass: 'MODEL_PROPOSAL' }), ProvenanceError);
+  assert.throws(() => recordSource({ ...sourceFields, confidence: undefined }), ProvenanceError);
+  assert.throws(() => recordSource({ ...sourceFields, confidence: 'verified' }), ProvenanceError);
 });
 
 test('small items pass through whole: not shortened, nothing cut', () => {

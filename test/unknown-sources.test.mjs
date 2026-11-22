@@ -23,7 +23,7 @@ test('a source whose digest cannot be given is recorded as unknown, not dropped'
   assert.equal(isUnknownSource(unknown), true);
   assert.throws(() => { unknown.digest = DIGEST; }, TypeError);           // never filled in later
 
-  const known = recordSource({ id: 'src-1', title: 't', digest: DIGEST, origin: 'text', originRef: 'r' });
+  const known = recordSource({ id: 'src-1', title: 't', digest: DIGEST, origin: 'text', originRef: 'r', evidenceClass: 'operator-intent', confidence: 'direct-operator' });
   assert.equal(known.status, 'recorded');
   assert.equal(isUnknownSource(known), false);
 });
@@ -36,6 +36,16 @@ test('an unknown record still says where it looked and why it failed', () => {
   assert.throws(() => recordUnknownSource({ ...base, reason: 'empty' }), ProvenanceError);
   assert.throws(() => recordUnknownSource({ ...base, reason: undefined }), ProvenanceError);
   assert.equal(recordUnknownSource({ ...base, title: undefined }).title, null);  // a title may be unknown too
+});
+
+test('an unknown source does not adopt a supplied evidence class or confidence', () => {
+  const unknown = recordUnknownSource({
+    id: 'src-9', origin: 'text', originRef: 'r', reason: 'read-failed',
+    evidenceClass: 'verified-outcome', confidence: 'direct-tool',
+  });
+  assert.equal(isUnknownSource(unknown), true);
+  assert.equal(Object.hasOwn(unknown, 'evidenceClass'), false);
+  assert.equal(Object.hasOwn(unknown, 'confidence'), false);
 });
 
 test('excerpts of an unknown source never enter a packet, even with a digest attached', () => {
@@ -81,7 +91,7 @@ test('omissions keep input order across reasons', () => {
 });
 
 test('the packet refuses a malformed unknown list', () => {
-  const known = recordSource({ id: 'src-1', title: 't', digest: DIGEST, origin: 'text', originRef: 'r' });
+  const known = recordSource({ id: 'src-1', title: 't', digest: DIGEST, origin: 'text', originRef: 'r', evidenceClass: 'operator-intent', confidence: 'direct-operator' });
   assert.throws(() => buildContextPacket({ items: [], unknownSources: 'src-9' }), PacketError);
   assert.throws(() => buildContextPacket({ items: [], unknownSources: [known] }), PacketError);           // known is not unknown
   assert.throws(() => buildContextPacket({ items: [], unknownSources: [{ id: 'src-9', status: 'unknown' }] }), PacketError);

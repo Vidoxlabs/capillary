@@ -14,8 +14,12 @@ A source is admitted to the corpus with:
 | `digest` | 64-hex SHA-256 of the recorded content |
 | `origin` | one of `url`, `repository`, `text`, `workspace-file`, `run-artifact` |
 | `originRef` | the address inside its origin class: the URL, the repository path, the pasted-text label, the workspace path, the producing run and artifact |
+| `evidenceClass` | what kind of claim the source carries. One of `operator-intent`, `operator-constraint`, `model-proposal`, `model-analysis`, `tool-observation`, `verified-outcome`, `unverified-claim`, `system-metadata` |
+| `confidence` | how directly the claim is grounded. One of `direct-operator`, `direct-tool`, `model-with-evidence`, `model-unverified`, `historical-summary`, `derived` |
 
-A recorded source carries `status: 'recorded'`.
+A recorded source carries `status: 'recorded'`. Callers supply the evidence class and
+confidence independently of the origin. A `model-proposal` stays a proposal regardless
+of where it was found.
 
 ## Unknown sources
 
@@ -29,8 +33,8 @@ excerpts never enter a packet. `recordUnknownSource` takes:
 | `origin`, `originRef` | where retrieval looked, as for a recorded source |
 | `reason` | one of `not-found`, `read-failed`, `digest-unavailable` |
 
-The record has `digest: null` and `status: 'unknown'`, and it is frozen: nothing fills
-it in later. `isUnknownSource` recognizes a well-formed unknown record. A failed read is
+The frozen record has `digest: null` and `status: 'unknown'`, with no evidence class or
+confidence. `isUnknownSource` recognizes a well-formed unknown record. A failed read is
 not "no results": a packet that found only unknown sources has an empty `items` list
 and a non-empty `unknown` list, and is never equal to an empty packet.
 
@@ -105,6 +109,10 @@ The builder admits items in the order given, taking `min(perItemBudget, remainin
 characters per item. Same inputs, same packet: retrieval shaping is pure and testable.
 
 ## Changes
+
+- `1.0.0` — breaking change to `recordSource`. It refuses recorded sources that omit
+  `evidenceClass` or `confidence`. Supply both fields from the source evidence when
+  migrating an older record. `recordUnknownSource` retains its existing shape.
 
 - `0.3.0` — packet items carry `relevance` and `recency` as separate fields, and an
   item with a fused `score` is refused. `buildEpochGuardedPacket` and `EPOCH_REFUSALS`

@@ -1,6 +1,6 @@
 {
   "name": "@vidoxlabs/capillary",
-  "version": "0.3.0",
+  "version": "1.0.0",
   "description": "Context retrieval and relations for agent workspaces: provenance-honest sources, bounded packets.",
   "type": "module",
   "license": "MIT",
