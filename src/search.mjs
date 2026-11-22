@@ -1,6 +1,7 @@
 /** Literal search over supplied source records. Contract: docs/contracts/retrieval.md */
 
 import { readAtStableEpoch } from './epoch-guard.mjs';
+import { excerpt } from './excerpt.mjs';
 import { recordSource } from './provenance.mjs';
 
 const DEFAULT_SNIPPET_CHARS = 160;
@@ -20,15 +21,6 @@ function countMatches(text, needle) {
     relevance += 1;
   }
   return relevance;
-}
-
-function excerpt(text, limit) {
-  const line = text.trim().replace(/\s+/g, ' ');
-  let carried = Math.min(limit, line.length);
-  const boundary = line.slice(carried - 1, carried + 1);
-  if (/[\uD800-\uDBFF][\uDC00-\uDFFF]/.test(boundary)) carried -= 1;
-  const cut = line.length - carried;
-  return { snippet: line.slice(0, carried), shortened: cut > 0, carried, cut };
 }
 
 function findHits(records, needle, snippetChars) {
