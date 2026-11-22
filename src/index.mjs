@@ -1,6 +1,6 @@
 /** Capillary contract modules. The retrieval service is staged; these contracts are the floor. */
 
-export const VERSION = '0.1.0';
+export const VERSION = '0.2.0';
 
 export * from './provenance.mjs';
 export * from './packet.mjs';
@@ -11,8 +11,9 @@ const about = () => `
 capillary ${VERSION} — a local-first context retrieval system for agent workspaces.
 
 Contracts (implemented):
-  provenance  recordSource (id, title, 64-hex digest, origin class, originRef)
-  packet      buildContextPacket (bounded, declared truncation, declared omissions)
+  provenance  recordSource (id, title, 64-hex digest, origin class, originRef),
+              recordUnknownSource, isUnknownSource (unknown stays unknown)
+  packet      buildContextPacket (bounded, declared truncation, omissions, unknowns)
   relations   relationRecord, isSoundLedger (typed, append-only)
 
 Service surfaces (specified, not shipped): the index and the retrieval endpoint.

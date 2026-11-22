@@ -24,5 +24,41 @@ export function recordSource({ id, title, digest, origin, originRef }) {
   if (typeof originRef !== 'string' || originRef.length === 0) {
     throw new ProvenanceError('A source names its originRef inside its origin class.');
   }
-  return Object.freeze({ id, title, digest, origin, originRef });
+  return Object.freeze({ id, title, digest, origin, originRef, status: 'recorded' });
+}
+
+/** Why a source stayed unknown. Closed: a new reason is a contract decision. */
+export const UNKNOWN_REASONS = ['not-found', 'read-failed', 'digest-unavailable'];
+
+/**
+ * Record a source that could not be read or verified. It stays unknown: the digest is
+ * null, the record is frozen so nothing fills it in later, and its excerpts never enter
+ * a packet. The record still names where retrieval looked and why it failed.
+ */
+export function recordUnknownSource({ id, title = null, origin, originRef, reason }) {
+  if (typeof id !== 'string' || id.length === 0) throw new ProvenanceError('An unknown source still needs a non-empty id.');
+  if (title !== null && (typeof title !== 'string' || title.length === 0)) {
+    throw new ProvenanceError('An unknown source title is a non-empty string or null.');
+  }
+  if (!ORIGIN_CLASSES.has(origin)) {
+    throw new ProvenanceError(`origin must be one of ${[...ORIGIN_CLASSES].join(', ')}.`);
+  }
+  if (typeof originRef !== 'string' || originRef.length === 0) {
+    throw new ProvenanceError('An unknown source names the originRef retrieval looked at.');
+  }
+  if (!UNKNOWN_REASONS.includes(reason)) {
+    throw new ProvenanceError(`An unknown source states its reason: one of ${UNKNOWN_REASONS.join(', ')}.`);
+  }
+  return Object.freeze({ id, title, digest: null, origin, originRef, status: 'unknown', reason });
+}
+
+/** True only for a well-formed unknown-source record. */
+export function isUnknownSource(source) {
+  return source !== null && typeof source === 'object'
+    && source.status === 'unknown'
+    && source.digest === null
+    && typeof source.id === 'string' && source.id.length > 0
+    && ORIGIN_CLASSES.has(source.origin)
+    && typeof source.originRef === 'string' && source.originRef.length > 0
+    && UNKNOWN_REASONS.includes(source.reason);
 }

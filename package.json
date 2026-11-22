@@ -1,6 +1,6 @@
 {
   "name": "@vidoxlabs/capillary",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "A local-first context retrieval system: provenance-honest sources, bounded packets, and context relations for agent workspaces like Bloom",
   "type": "module",
   "license": "MIT",

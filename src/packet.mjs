@@ -1,8 +1,35 @@
 /** The bounded, provenance-honest packet builder. Contract: docs/contracts/retrieval.md */
 
-import { DIGEST_PATTERN } from './provenance.mjs';
+import { DIGEST_PATTERN, isUnknownSource } from './provenance.mjs';
 
 export class PacketError extends Error {};
+
+/** Why an item was left out of a packet. Closed: a new reason is a contract decision. */
+export const OMISSION_REASONS = ['out-of-budget', 'unknown-source'];
+
+function itemIdentity(item, index) {
+  if (item === null || typeof item !== 'object') {
+    throw new PacketError(`Item ${index} must be an object.`);
+  }
+  const { id, sourceId } = item;
+  if (typeof id !== 'string' || id.length === 0) throw new PacketError(`Item ${index} needs a non-empty id.`);
+  if (typeof sourceId !== 'string' || sourceId.length === 0) {
+    throw new PacketError(`Item ${index} needs its source id; untethered prose does not enter a packet.`);
+  }
+  return { id, sourceId };
+}
+
+function unknownIndex(unknownSources) {
+  if (!Array.isArray(unknownSources)) throw new PacketError('unknownSources must be an array of unknown-source records.');
+  const byId = new Map();
+  unknownSources.forEach((source, index) => {
+    if (!isUnknownSource(source)) {
+      throw new PacketError(`unknownSources[${index}] is not an unknown-source record; record it with recordUnknownSource.`);
+    }
+    if (!byId.has(source.id)) byId.set(source.id, source);
+  });
+  return byId;
+}
 
 /**
  * The family baseline budgets, proved by the first consumer's team packets:
@@ -34,10 +61,13 @@ function validatedItem(item, index) {
 /**
  * Build a bounded packet. Admission is ordered and deterministic: each item carries
  * min(perItemBudget, remaining) characters; shortening is declared, never silent;
- * items the budgets leave out are listed with their reason.
+ * items the budgets leave out are listed with their reason. Sources the caller could not
+ * read or verify are listed under `unknown`, and any item citing one is omitted with
+ * reason `unknown-source` — an unknown source stays unknown.
  */
 export function buildContextPacket({
   items,
+  unknownSources = [],
   totalBudget = BLOOM_BASELINE.TOTAL_EXCERPT_BUDGET,
   perItemBudget = BLOOM_BASELINE.PER_ITEM_BUDGET,
 }) {
@@ -48,11 +78,20 @@ export function buildContextPacket({
     throw new PacketError('perItemBudget must be a positive integer.');
   }
   if (!Array.isArray(items)) throw new PacketError('items must be an array.');
-  const checked = items.map(validatedItem);
+  const unknownById = unknownIndex(unknownSources);
+  // Validate every item before admitting any, so a malformed item fails the whole packet.
+  const checked = items.map((raw, index) => {
+    const { id, sourceId } = itemIdentity(raw, index);
+    return unknownById.has(sourceId) ? { id, unknownSource: true } : validatedItem(raw, index);
+  });
+  const omitted = [];
   let remaining = totalBudget;
   const admitted = [];
-  const omitted = [];
   for (const item of checked) {
+    if (item.unknownSource) {
+      omitted.push({ id: item.id, reason: 'unknown-source' });
+      continue;
+    }
     const take = Math.min(perItemBudget, remaining);
     if (take <= 0) {
       omitted.push({ id: item.id, reason: 'out-of-budget' });
@@ -71,9 +110,13 @@ export function buildContextPacket({
     });
     remaining -= carried;
   }
+  const unknown = [...unknownById.values()].map(({ id, origin, originRef, reason }) => ({
+    sourceId: id, origin, originRef, reason,
+  }));
   return {
     items: admitted,
     omitted,
+    unknown,
     totalBudget,
     perItemBudget,
   };
