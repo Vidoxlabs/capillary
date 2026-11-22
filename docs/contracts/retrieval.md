@@ -1,7 +1,8 @@
 # Contract: bounded retrieval and provenance
 
-Status: `specified`. Source records, packet building, and bounded reads over caller
-text are `implemented` in `src/provenance.mjs`, `src/packet.mjs`, and `src/read.mjs`.
+Source records, packet building, bounded reads, and literal search are `implemented`
+in `src/provenance.mjs`, `src/packet.mjs`, `src/read.mjs`, and `src/search.mjs`.
+The retrieval service is `specified`.
 
 ## Source records
 
@@ -120,12 +121,35 @@ and `text`. A missing id returns `ok: false` with `error.code: 'source-not-found
 An unknown source or a malformed recorded source returns `source-unavailable`.
 Errors carry no text and set `continuationAvailable` to false.
 
+## Literal search
+
+`await searchSources({ query, records, snippetChars = 160, readEpoch })` searches
+text supplied by the caller. Each record carries the source fields above, `text`,
+and an explicit `recency` value in epoch milliseconds or `null`. A record with a
+fused `score` or invalid source fields refuses the search with zero hits.
+
+Hits appear in input order with `sourceId`, `sourceDigest`, `title`, `evidenceClass`,
+and `confidence`. `relevance` counts non-overlapping literal matches in the text,
+ignoring case and whitespace at the ends of the query. `recency` is passed through.
+The snippet collapses whitespace to a single line and carries at most `snippetChars`
+UTF-16 code units, keeping surrogate pairs intact. The packet fields `shortened`,
+`carried`, and `cut` describe any cut to that line.
+
+Every result carries `untrusted: true`. No matches returns
+`{ ok: true, untrusted: true, hits: [], count: 0 }`. With optional `readEpoch`, the
+same deletion-epoch guard brackets matching. A stable result carries `deletionEpoch`.
+A changed or unavailable epoch carries the guard's refusal fields with `ok: false`,
+`hits: []`, and `count: 0`. Search uses only the supplied records and epoch reader.
+
 ## Determinism
 
 The builder admits items in the order given, taking `min(perItemBudget, remaining)`
 characters per item. Same inputs, same packet: retrieval shaping is pure and testable.
 
 ## Changes
+
+- `1.2.0` adds `searchSources` for literal matching and bounded snippets from
+  supplied records.
 
 - `1.1.0` — adds `readSource`, an untrusted bounded-read envelope for supplied text.
 

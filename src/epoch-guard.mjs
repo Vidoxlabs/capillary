@@ -23,6 +23,23 @@ const refuse = (code, epochStart, epochEnd, reason) => Object.freeze({
   refused: true, code, epochStart, epochEnd, reason,
 });
 
+export async function readAtStableEpoch(readEpoch, read) {
+  const epochStart = await readEpochSafely(readEpoch);
+  if (epochStart === null) {
+    return refuse('deletion-epoch-unavailable', null, null, 'The deletion epoch could not be read before retrieval.');
+  }
+  const rows = await read();
+  const epochEnd = await readEpochSafely(readEpoch);
+  if (epochEnd === null) {
+    return refuse('deletion-epoch-unavailable', epochStart, null, 'The deletion epoch could not be read after retrieval.');
+  }
+  if (epochEnd !== epochStart) {
+    return refuse('deletion-epoch-changed', epochStart, epochEnd,
+      'A forget landed during retrieval; the rows read may include forgotten content.');
+  }
+  return { rows, deletionEpoch: epochStart };
+}
+
 /**
  * Read the deletion epoch, run the read, read the epoch again, then build the packet.
  *
@@ -39,24 +56,14 @@ const refuse = (code, epochStart, epochEnd, reason) => Object.freeze({
 export async function buildEpochGuardedPacket({ readEpoch, read, totalBudget, perItemBudget }) {
   if (typeof readEpoch !== 'function') throw new TypeError('readEpoch must be a function.');
   if (typeof read !== 'function') throw new TypeError('read must be a function.');
-  const epochStart = await readEpochSafely(readEpoch);
-  if (epochStart === null) {
-    return refuse('deletion-epoch-unavailable', null, null, 'The deletion epoch could not be read before retrieval.');
-  }
-  const rows = await read();
-  const epochEnd = await readEpochSafely(readEpoch);
-  if (epochEnd === null) {
-    return refuse('deletion-epoch-unavailable', epochStart, null, 'The deletion epoch could not be read after retrieval.');
-  }
-  if (epochEnd !== epochStart) {
-    return refuse('deletion-epoch-changed', epochStart, epochEnd,
-      'A forget landed during retrieval; the rows read may include forgotten content.');
-  }
+  const checked = await readAtStableEpoch(readEpoch, read);
+  if (checked.refused) return checked;
+  const { rows, deletionEpoch } = checked;
   const packet = buildContextPacket({
     items: rows?.items,
     unknownSources: rows?.unknownSources ?? [],
     ...(totalBudget === undefined ? {} : { totalBudget }),
     ...(perItemBudget === undefined ? {} : { perItemBudget }),
   });
-  return { ...packet, deletionEpoch: epochStart };
+  return { ...packet, deletionEpoch };
 }

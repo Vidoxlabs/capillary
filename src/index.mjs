@@ -1,12 +1,13 @@
 /** Capillary contract modules. The retrieval service is staged; these contracts are the floor. */
 
-export const VERSION = '1.1.0';
+export const VERSION = '1.2.0';
 
 export * from './provenance.mjs';
 export * from './packet.mjs';
 export * from './relations.mjs';
-export * from './epoch-guard.mjs';
+export { buildEpochGuardedPacket, EPOCH_REFUSALS } from './epoch-guard.mjs';
 export { readSource } from './read.mjs';
+export { searchSources } from './search.mjs';
 
 /** Print the contract surface and claim labels for a quick human read. */
 const about = () => `
@@ -19,6 +20,7 @@ Contracts (implemented):
               relevance and recency as separate fields)
   epoch-guard buildEpochGuardedPacket (refuses a read the deletion epoch moved under)
   read        readSource (caller text, estimated token budget, untrusted envelope)
+  search      searchSources (literal matches, declared snippet cuts, untrusted envelope)
   relations   relationRecord, isSoundLedger (typed, append-only)
               walkParentChain (bounded walk of supplied parent ids)
 
