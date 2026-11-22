@@ -58,7 +58,7 @@ This repository is context retrieval: provenance records, bounded packets, and r
 
 A packet declares truncation and omission. An unknown source stays unknown. Do not fill a gap from another repository.
 
-## Where the other six live
+## Where the other seven live
 
 | The work | Repository |
 | --- | --- |
@@ -69,6 +69,7 @@ A packet declares truncation and omission. An unknown source stays unknown. Do n
 | Tool faces, skills, hooks, cookbooks | `drosera` |
 | Probes over those libraries | `trellis` |
 | The team workspace a person opens | `bloom` |
+| Family documentation, synced from every public repository | `docs` |
 
 The naming law is `docs/family.md`. `videsign` remains the design canon.
 
