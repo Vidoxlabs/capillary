@@ -35,7 +35,7 @@ scopes by default, and a run records them as intents like any other tool call.
 ## With the memory fabric
 
 Memory (the governed, consent-first store whose public counterpart is
-[named and pending](family.md)) and capillary are different organs:
+[myosotis](https://github.com/Vidoxlabs/myosotis)) and capillary are different organs:
 
 - The **memory fabric** remembers with consent and forgets on demand; it answers "what
   was I told to keep."
@@ -50,7 +50,7 @@ this?") question out of retrieval entirely.
 ## With the admission and review loop
 
 The loop (the bud-arrangement system whose public counterpart is
-[named and pending](family.md)) validates a proposed plan and gates assembly. Capillary
+[aestivation](https://github.com/Vidoxlabs/aestivation)) validates a proposed plan and gates assembly. Capillary
 serves it exact evidence: the packet a step admitted, the digests behind it, and the
 relations describing how artifacts derive from sources. Capillary never issues verdicts;
 the loop never invents evidence. Together: the loop decides what may bloom, and
