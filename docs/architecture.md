@@ -21,7 +21,8 @@ Status: `specified`; modules named below exist (`implemented`) where marked.
 4. **The relation ledger** (`implemented as records` in `src/relations.mjs`) — typed,
    append-only records linking known sources: the organization half of context work.
    `derived-from`, `references`, `subsumes`, `revised-from`, `relates-to`. The ledger is
-   an event history: appended to, never rewritten.
+   an event history: appended to, never rewritten. `walkParentChain` follows explicit
+   parent ids in a caller-supplied map with a declared stopping reason.
 
 ## The retrieval seam
 

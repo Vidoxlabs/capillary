@@ -23,7 +23,7 @@ opens a network listener or retrieves over the network today.
 | `src/provenance.mjs` | Records sources (id, title, 64-hex digest, origin class, origin reference), and records unknown sources with their reason |
 | `src/packet.mjs` | Builds bounded context packets with **declared** truncation, budgeted admission, declared unknown sources, and relevance and recency kept as separate fields |
 | `src/epoch-guard.mjs` | Refuses a packet when the deletion epoch at the end of a read differs from the epoch at its start, or cannot be read |
-| `src/relations.mjs` | Typed, append-only relation records over a known set of sources |
+| `src/relations.mjs` | Typed, append-only relations and bounded walks over supplied parent links |
 
 `npm install && npm test` verifies all of it. No runtime dependencies.
 

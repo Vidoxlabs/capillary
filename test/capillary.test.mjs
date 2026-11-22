@@ -4,6 +4,7 @@ import assert from 'node:assert/strict';
 import { recordSource, ProvenanceError, ORIGIN_CLASSES } from '../src/provenance.mjs';
 import { buildContextPacket, BLOOM_BASELINE, PacketError } from '../src/packet.mjs';
 import { relationRecord, isSoundLedger, RelationError } from '../src/relations.mjs';
+import { walkParentChain } from '../src/index.mjs';
 
 const DIGEST = 'a'.repeat(64);
 const otherDigest = 'b'.repeat(64);
@@ -96,4 +97,34 @@ test('ledger records remain frozen once written', () => {
   const record = relationRecord({ type: 'revised-from', from: 'src-2', to: 'src-1' });
   assert.throws(() => { record.type = 'references'; }, TypeError);
   assert.equal(record.type, 'revised-from');
+});
+
+test('a parent walk follows known links from nearest parent to root', () => {
+  const parentsById = new Map([['child', 'parent'], ['parent', 'root'], ['root', null], ['unrelated', null]]);
+  const result = walkParentChain({ startId: 'child', parentsById });
+  assert.deepEqual(result, { parentIds: ['parent', 'root'], stop: 'root', at: 'root' });
+  assert.ok(Object.isFrozen(result));
+  assert.ok(Object.isFrozen(result.parentIds));
+});
+
+test('a parent walk stops at the first missing link and reports its id', () => {
+  const links = [['child', 'parent'], ['parent', 'missing'], ['unrelated', null]];
+  const parentsById = new Map(links);
+  assert.deepEqual(walkParentChain({ startId: 'child', parentsById }),
+    { parentIds: ['parent'], stop: 'missing', at: 'missing' });
+  assert.deepEqual(walkParentChain({ startId: 'unknown', parentsById }),
+    { parentIds: [], stop: 'missing', at: 'unknown' });
+  assert.deepEqual([...parentsById], links);
+});
+
+test('a parent walk reports cycles and the hop limit', () => {
+  const parentsById = new Map([['child', 'parent'], ['parent', 'grandparent'], ['grandparent', 'parent']]);
+  assert.deepEqual(walkParentChain({ startId: 'child', parentsById }),
+    { parentIds: ['parent', 'grandparent'], stop: 'cycle', at: 'parent' });
+  assert.deepEqual(walkParentChain({ startId: 'child', parentsById, limit: 1 }),
+    { parentIds: ['parent'], stop: 'limit', at: 'grandparent' });
+  assert.deepEqual(walkParentChain({ startId: 'child', parentsById, limit: 0 }),
+    { parentIds: [], stop: 'limit', at: 'parent' });
+  assert.throws(() => walkParentChain({ startId: 'child', parentsById, limit: 51 }), RelationError);
+  assert.throws(() => walkParentChain({ startId: 'child', parentsById, limit: -1 }), RelationError);
 });

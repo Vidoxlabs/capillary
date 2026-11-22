@@ -18,6 +18,7 @@ Contracts (implemented):
               relevance and recency as separate fields)
   epoch-guard buildEpochGuardedPacket (refuses a read the deletion epoch moved under)
   relations   relationRecord, isSoundLedger (typed, append-only)
+              walkParentChain (bounded walk of supplied parent ids)
 
 Service surfaces (specified, not shipped): the index and the retrieval endpoint.
 See docs/contracts/ and docs/interop.md. Nothing in this repository opens a

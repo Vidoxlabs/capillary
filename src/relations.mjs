@@ -6,6 +6,8 @@ export const RELATION_TYPES = new Set([
   'derived-from', 'references', 'subsumes', 'revised-from', 'relates-to',
 ]);
 
+const MAX_PARENT_HOPS = 50;
+
 /**
  * Create one relation record. Types are closed; both endpoints are known source ids;
  * a source never relates to itself. Records are frozen — the ledger is append-only.
@@ -49,4 +51,33 @@ export function isSoundLedger({ sources, relations }) {
     seen.add(key);
   });
   return { ok: errors.length === 0, errors };
+}
+
+/** Follow explicit parent ids in a supplied map. A known root maps to null. */
+export function walkParentChain({ startId, parentsById, limit = MAX_PARENT_HOPS } = {}) {
+  if (typeof startId !== 'string' || startId.length === 0) throw new RelationError('startId must be a non-empty source id.');
+  if (!(parentsById instanceof Map)) throw new RelationError('parentsById must be a Map.');
+  if (!Number.isSafeInteger(limit) || limit < 0 || limit > MAX_PARENT_HOPS) {
+    throw new RelationError(`limit must be an integer from 0 to ${MAX_PARENT_HOPS}.`);
+  }
+
+  const parentIds = [];
+  const finish = (stop, at) => Object.freeze({ parentIds: Object.freeze(parentIds), stop, at });
+  if (!parentsById.has(startId)) return finish('missing', startId);
+
+  const seen = new Set([startId]);
+  let current = startId;
+  while (true) {
+    const parent = parentsById.get(current);
+    if (parent === null) return finish('root', current);
+    if (typeof parent !== 'string' || parent.length === 0) {
+      throw new RelationError('A parent link must name a source id or be null at the root.');
+    }
+    if (parentIds.length === limit) return finish('limit', parent);
+    if (seen.has(parent)) return finish('cycle', parent);
+    if (!parentsById.has(parent)) return finish('missing', parent);
+    parentIds.push(parent);
+    seen.add(parent);
+    current = parent;
+  }
 }
