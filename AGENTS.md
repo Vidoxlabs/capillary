@@ -9,6 +9,9 @@ Capillary is a public repository. Everything committed here can be read by anyon
 3. `docs/contracts/` — the two contracts: bounded retrieval and context relations.
 4. `docs/family.md` — the botanic naming line, and why it exists.
 5. The seed repository's `docs/lexicon.md` for generalized terminology rules.
+6. `docs/capabilities/`: capability ledger (`index.json`) and lead capability specifications.
+
+Any PR that adds, changes, advances, or lands a capability slice must update `docs/capabilities/index.json`, the owning spec's Evidence and Changes sections, `docs/CHANGELOG.md`, and any touched contract's Changes section in the same PR.
 
 ## Claim discipline
 
