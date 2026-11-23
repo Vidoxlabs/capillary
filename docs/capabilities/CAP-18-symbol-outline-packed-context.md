@@ -4,7 +4,7 @@
 - Title: Symbol outline for packed context
 - Lead: `capillary`
 - Touches: `drosera`, `bloom`
-- Horizon: Later
+- Horizon: later
 - Milestone: M8
 - CLI phase: none
 - Status: `proposed`
@@ -56,9 +56,9 @@ Adding a zero-dependency symbol outline extractor inside `capillary` keeps packe
 
 ## Slices
 
-- `CAP-18.1` (`capillary`, `proposed`): Zero-dependency JS, Markdown, and JSON symbol outline parser and unknown fallback.
-- `CAP-18.2` (`drosera`, `proposed`): Outline reader tool face definition and schema.
-- `CAP-18.3` (`bloom`, `proposed`): Symbol outline executor and packer wiring.
+- `CAP-18.1` (`capillary`, `M8`, `proposed`): Zero-dependency JS, Markdown, and JSON symbol outline parser and unknown fallback.
+- `CAP-18.2` (`drosera`, `M8`, `proposed`): Outline reader tool face definition and schema.
+- `CAP-18.3` (`bloom`, `M8`, `proposed`): Symbol outline executor and packer wiring.
 
 ## Non-goals
 
@@ -75,7 +75,7 @@ Adding a zero-dependency symbol outline extractor inside `capillary` keeps packe
 
 ## Open owner decisions
 
-None new for `CAP-18`; inherits `CAP-05` packer decisions (`D5`, `D6`, `D9`, `D10`) and `CAP-03` schema parity (`D4`).
+None new for `CAP-18`; inherits `CAP-05` packer decisions (`D5`, `D6`, `D9`, `D10`, `D14`) and `CAP-03` schema parity (`D4`).
 
 ## Evidence
 
@@ -84,3 +84,4 @@ None yet (`status: proposed`, `claim: planned`). Code, test receipts, and commit
 ## Changes
 
 - `2026-11-23`: Initial capability specification drafted for `CAP-01` timeline scaffold.
+- `2026-11-23`: Standardized `Horizon: later`, added `M8` slice milestones, and aligned inherited `CAP-05` decision references (`CAP-01`, review fixes).
