@@ -37,3 +37,5 @@ network listener or retrieves over the network today.
 if (process.argv[1] && process.argv[1].endsWith('index.mjs')) {
   console.log(about());
 }
+export { selectContextFiles } from './codebase-selection.mjs';
+export { packCodebaseContext } from './codebase-packet.mjs';
