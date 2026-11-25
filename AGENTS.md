@@ -1,3 +1,5 @@
+<!-- Managed file. Propose changes by pull request; they are carried into the shared templates. hash: e0c42741ac991965 -->
+
 # Capillary workspace
 
 Capillary is a public repository. Everything committed here can be read by anyone.
