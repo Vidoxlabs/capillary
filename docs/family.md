@@ -19,9 +19,8 @@ seed                          the contract floor
 - **Capillary, myosotis, aestivation, and drosera** are peers. They do not import each other. A later call goes from a peer down onto seed's published exports, or upward into bloom. Drosera is external tool faces, skills, hooks, and cookbooks. It is not seed's harness tooling. Myosotis is memory, including how it stores records. That storage is myosotis's concern, not another product.
 - **Trellis** reports disagreement. The repository that lagged repairs itself in its own task.
 
-The public-product family is named from botany, on purpose: the five persona seats of
-the house canon — Violet, Wisteria, Xylia, Yarrow, Zinnia — are all flowering plants, so
-the products they use take the same kingdom. Each name names what its system does:
+The public-product family is named from botany, on purpose. Each name names what its
+system does:
 
 | Name | Botany | System | Place |
 | --- | --- | --- | --- |
